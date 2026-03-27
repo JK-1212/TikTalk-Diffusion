@@ -1,0 +1,17 @@
+# Environment
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Outputs (images too large for git)
+outputs/*.png
+outputs/*.jpg
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
