@@ -33,6 +33,11 @@ SCENARIO_TEMPLATES = {
         "A {character} {action} at the dining table",
         "A family having breakfast together at home",
         "A child helping to wash dishes in the kitchen",
+        "A {character} folding clothes on a bed",
+        "A {character} feeding a pet cat at home",
+        "A family watching television together on a sofa",
+        "A {character} setting the table for dinner",
+        "A {character} tidying up toys in the bedroom",
     ],
     "school": [
         "Children {action} in the classroom",
@@ -40,6 +45,11 @@ SCENARIO_TEMPLATES = {
         "Children playing on the school playground",
         "A teacher and students in a classroom",
         "Children eating lunch in the school canteen",
+        "A {character} raising a hand to answer a question in class",
+        "Children doing a science experiment with test tubes",
+        "A {character} painting on an easel during art class",
+        "Children running a relay race on a sports field",
+        "A {character} presenting a project in front of the class",
     ],
     "outdoor": [
         "A {character} {action} in the park",
@@ -47,6 +57,11 @@ SCENARIO_TEMPLATES = {
         "A family having a picnic under a big tree",
         "A {character} riding a bicycle on a path",
         "Children flying kites in an open field",
+        "A {character} feeding ducks at a pond in the park",
+        "Children playing hide and seek behind trees",
+        "A {character} skating on a path in the park",
+        "A family walking along a beach collecting seashells",
+        "Children building sandcastles on a sunny beach",
     ],
     "community": [
         "People shopping at a supermarket",
@@ -54,6 +69,11 @@ SCENARIO_TEMPLATES = {
         "Children visiting a fire station",
         "A {character} at the bus stop waiting for a bus",
         "People at a community event in the neighbourhood",
+        "A {character} borrowing books at a public library counter",
+        "Children watching a lion dance performance at a festival",
+        "A {character} buying a drink from a hawker centre stall",
+        "People queuing up at a clinic waiting room",
+        "A {character} posting a letter at a red postbox",
     ],
     "nature": [
         "A {character} looking at animals in the zoo",
@@ -61,6 +81,47 @@ SCENARIO_TEMPLATES = {
         "A {character} planting flowers in a garden",
         "Fish swimming in a clear pond",
         "A {character} watching butterflies in a meadow",
+        "A {character} picking apples from a tree in an orchard",
+        "A rabbit and a turtle on a grassy hill",
+        "A {character} holding an umbrella walking in the rain",
+        "Children exploring a nature trail in a forest",
+        "A {character} looking at stars through a telescope at night",
+    ],
+    "festivals": [
+        "A family decorating a Christmas tree at home",
+        "Children wearing costumes for a Halloween party",
+        "A family reunion dinner with dumplings on the table",
+        "A {character} lighting a lantern during Mid-Autumn Festival",
+        "Children opening presents on Christmas morning",
+        "A family making mooncakes together in the kitchen",
+        "Children watching fireworks in the night sky",
+        "A {character} giving red packets during Chinese New Year",
+        "Children decorating eggs for Easter",
+        "A family preparing a barbecue for National Day",
+    ],
+    "helping": [
+        "A {character} helping an elderly person cross the road",
+        "Children picking up litter in a park",
+        "A {character} sharing food with a friend at school",
+        "Children donating toys to a donation box",
+        "A {character} carrying groceries for a neighbour",
+        "Children watering plants in a community garden",
+        "A {character} teaching a younger child to read",
+        "Children sorting recyclable items into different bins",
+        "A {character} holding the door open for others",
+        "A {character} comforting a crying friend on a bench",
+    ],
+    "transportation": [
+        "A {character} riding on an MRT train looking out the window",
+        "A family waiting at an airport departure gate",
+        "A {character} getting on a yellow school bus",
+        "Children riding a double-decker sightseeing bus",
+        "A {character} waving goodbye from a taxi",
+        "A family boarding a ferry at a harbour",
+        "Children crossing the road at a zebra crossing with traffic lights",
+        "A {character} looking at a map at a bus interchange",
+        "A family loading luggage into a car boot for a road trip",
+        "A {character} riding a scooter on a park path",
     ],
 }
 
@@ -68,6 +129,8 @@ SCENARIO_TEMPLATES = {
 CHARACTERS = [
     "boy", "girl", "child", "mother", "father",
     "grandmother", "grandfather", "young boy", "young girl",
+    "brother and sister", "group of children", "little girl with pigtails",
+    "boy wearing glasses", "girl in a school uniform",
 ]
 
 # Common actions suitable for PSLE scenarios
@@ -76,6 +139,10 @@ ACTIONS = [
     "drawing a picture", "eating", "cleaning",
     "talking to a friend", "walking the dog", "watering plants",
     "doing homework", "singing", "dancing",
+    "playing with building blocks", "writing in a notebook",
+    "taking a photograph", "playing a guitar", "baking cookies",
+    "feeding a bird", "blowing bubbles", "playing catch",
+    "jumping rope", "looking at a rainbow",
 ]
 
 

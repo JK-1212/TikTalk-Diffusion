@@ -1,7 +1,7 @@
 """
 TikTalk Diffusion Module - Image Generator
 
-Uses Google Imagen 3 API to generate child-appropriate images
+Uses OpenAI DALL-E 3 API to generate child-appropriate images
 for English oral practice (PSLE Stimulus-Based Conversation).
 
 Usage:
@@ -23,9 +23,9 @@ import os
 import time
 from pathlib import Path
 
+import requests
 from dotenv import load_dotenv
-from google import genai
-from google.genai import types
+from openai import OpenAI
 
 from prompt_templates import (
     STYLE_SUFFIX,
@@ -42,32 +42,32 @@ load_dotenv()
 OUTPUT_DIR = Path(__file__).parent / "outputs"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
-MODEL_NAME = "imagen-3.0-generate-002"
+MODEL_NAME = "dall-e-3"
 
 
-def get_client() -> genai.Client:
-    """Create a Google GenAI client."""
-    api_key = os.getenv("GOOGLE_API_KEY")
+def get_client() -> OpenAI:
+    """Create an OpenAI client."""
+    api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise ValueError(
-            "GOOGLE_API_KEY not found. "
+            "OPENAI_API_KEY not found. "
             "Copy .env.example to .env and fill in your API key.\n"
-            "Get one at: https://aistudio.google.com/apikey"
+            "Get one at: https://platform.openai.com/api-keys"
         )
-    return genai.Client(api_key=api_key)
+    return OpenAI(api_key=api_key)
 
 
 def generate_image(
-    client: genai.Client,
+    client: OpenAI,
     prompt: str,
     num_images: int = 1,
     save_prefix: str = "img",
 ) -> list[Path]:
     """
-    Generate images using Google Imagen 3.
+    Generate images using OpenAI DALL-E 3.
 
     Args:
-        client: Google GenAI client
+        client: OpenAI client
         prompt: Text prompt for image generation
         num_images: Number of images to generate (1-4)
         save_prefix: Filename prefix for saved images
@@ -79,30 +79,33 @@ def generate_image(
     print(f"Generating: {prompt}")
     print(f"Full prompt: {full_prompt[:100]}...")
 
-    response = client.models.generate_images(
-        model=MODEL_NAME,
-        prompt=full_prompt,
-        config=types.GenerateImagesConfig(
-            number_of_images=num_images,
-            aspect_ratio="1:1",
-            safety_filter_level="BLOCK_LOW_AND_ABOVE",
-        ),
-    )
-
     saved_paths = []
     timestamp = int(time.time())
 
-    for i, generated_image in enumerate(response.generated_images):
+    # DALL-E 3 only supports n=1, so loop for multiple images
+    for i in range(num_images):
+        print(f"  Requesting image {i+1}/{num_images}...")
+        response = client.images.generate(
+            model=MODEL_NAME,
+            prompt=full_prompt,
+            size="1024x1024",
+            quality="standard",
+            n=1,
+        )
+
+        image_url = response.data[0].url
+        img_data = requests.get(image_url, timeout=60).content
+
         filename = f"{save_prefix}_{timestamp}_{i}.png"
         filepath = OUTPUT_DIR / filename
-        generated_image.image.save(str(filepath))
+        filepath.write_bytes(img_data)
         print(f"  Saved: {filepath}")
         saved_paths.append(filepath)
 
     return saved_paths
 
 
-def generate_from_category(client: genai.Client, category: str, num_images: int = 1):
+def generate_from_category(client: OpenAI, category: str, num_images: int = 1):
     """Generate images for all prompts in a scenario category."""
     if category not in SCENARIO_TEMPLATES:
         print(f"Unknown category: {category}")

@@ -2,7 +2,7 @@
 
 Text-to-Image generation module for [TikTalk](https://github.com/JK-1212/TikTalk-Diffusion) — an AI-powered English speaking coach for primary school students in Singapore.
 
-Uses **Google Imagen 3** API to generate child-appropriate images for PSLE oral practice.
+Uses **OpenAI DALL-E 3** API to generate child-appropriate images for PSLE oral practice.
 
 ## Quick Start
 
@@ -16,8 +16,8 @@ pip install -r requirements.txt
 
 ```bash
 cp .env.example .env
-# Edit .env and paste your Google API key
-# Get one at: https://aistudio.google.com/apikey
+# Edit .env and paste your OpenAI API key
+# Get one at: https://platform.openai.com/api-keys
 ```
 
 ### 3. Generate images
@@ -26,7 +26,7 @@ cp .env.example .env
 # Generate a single image
 python generate.py --prompt "A boy playing with a dog in the park"
 
-# Generate from a category (daily_life / school / outdoor / community / nature)
+# Generate from a category
 python generate.py --category outdoor
 
 # Generate all predefined scenarios
@@ -35,6 +35,8 @@ python generate.py --all
 # List all categories
 python generate.py --list
 ```
+
+Available categories: `daily_life`, `school`, `outdoor`, `community`, `nature`, `festivals`, `helping`, `transportation` (80 prompts total).
 
 ### 4. Run API server (for other modules to call)
 

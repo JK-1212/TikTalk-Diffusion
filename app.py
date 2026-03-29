@@ -2,6 +2,7 @@
 TikTalk Diffusion Module - API Server
 
 Simple FastAPI server for other modules (VLM, Frontend) to call.
+Uses OpenAI DALL-E 3 for image generation.
 
 Usage:
     uvicorn app:app --reload --port 8000
@@ -15,16 +16,14 @@ API Endpoints:
 import os
 import time
 import base64
-from io import BytesIO
 from pathlib import Path
 
+import requests as http_requests
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
-
-from google import genai
-from google.genai import types
+from openai import OpenAI
 
 from prompt_templates import (
     build_prompt,
@@ -36,18 +35,18 @@ from prompt_templates import (
 
 load_dotenv()
 
-app = FastAPI(title="TikTalk Diffusion Module", version="0.1.0")
+app = FastAPI(title="TikTalk Diffusion Module", version="0.2.0")
 
 OUTPUT_DIR = Path(__file__).parent / "outputs"
 OUTPUT_DIR.mkdir(exist_ok=True)
-MODEL_NAME = "imagen-3.0-generate-002"
+MODEL_NAME = "dall-e-3"
 
 
-def get_client() -> genai.Client:
-    api_key = os.getenv("GOOGLE_API_KEY")
+def get_client() -> OpenAI:
+    api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        raise HTTPException(status_code=500, detail="GOOGLE_API_KEY not configured")
-    return genai.Client(api_key=api_key)
+        raise HTTPException(status_code=500, detail="OPENAI_API_KEY not configured")
+    return OpenAI(api_key=api_key)
 
 
 # --- Request / Response Models ---
@@ -92,33 +91,32 @@ def generate(req: GenerateRequest):
 
     full_prompt = build_prompt(req.prompt) if req.apply_style else req.prompt
 
-    try:
-        response = client.models.generate_images(
-            model=MODEL_NAME,
-            prompt=full_prompt,
-            config=types.GenerateImagesConfig(
-                number_of_images=req.num_images,
-                aspect_ratio="1:1",
-                safety_filter_level="BLOCK_LOW_AND_ABOVE",
-            ),
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Image generation failed: {e}")
-
     timestamp = int(time.time())
     image_paths = []
     image_base64_list = []
 
-    for i, gen_img in enumerate(response.generated_images):
+    # DALL-E 3 only supports n=1, so loop for multiple images
+    for i in range(req.num_images):
+        try:
+            response = client.images.generate(
+                model=MODEL_NAME,
+                prompt=full_prompt,
+                size="1024x1024",
+                quality="standard",
+                n=1,
+            )
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Image generation failed: {e}")
+
+        image_url = response.data[0].url
+        img_data = http_requests.get(image_url, timeout=60).content
+
         filename = f"api_{timestamp}_{i}.png"
         filepath = OUTPUT_DIR / filename
-        gen_img.image.save(str(filepath))
+        filepath.write_bytes(img_data)
         image_paths.append(str(filepath))
 
-        # Also return base64 so VLM module can use it directly
-        buffer = BytesIO()
-        gen_img.image.save(buffer, format="PNG")
-        b64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
+        b64 = base64.b64encode(img_data).decode("utf-8")
         image_base64_list.append(b64)
 
     return GenerateResponse(
